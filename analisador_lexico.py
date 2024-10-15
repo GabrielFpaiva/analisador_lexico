@@ -36,29 +36,45 @@ def rec_palavra_chave(s):
         return token(TipoToken.NULL, 'null', None), s[4:]
     return token(TipoToken.ERRO, s[0], None), s[1:]
 
-# função que identifica o próximo token na string de entrada
 def proximo_token(s):
     s = elimina_espacos(s)
     if len(s) == 0:
         return token(TipoToken.EOF, '', None), ''
-    elif s[0].isdigit():
+    
+    # Verifica se o primeiro caractere é um número ou um sinal negativo
+    elif s[0].isdigit() or s[0] == '-':
         return rec_numero(s)
+    
+    # Verifica strings
     elif s[0] == '"':
         return rec_string(s)
-    elif s[0] in '{':
+    
+    # Verifica símbolos JSON como chaves, colchetes, vírgulas e dois pontos
+    elif s[0] == '{':
         return token(TipoToken.ABRE_CHAVES, '{'), s[1:]
-    elif s[0] in '}':
+    elif s[0] == '}':
         return token(TipoToken.FECHA_CHAVES, '}'), s[1:]
-    elif s[0] in '[':
+    elif s[0] == '[':
         return token(TipoToken.ABRE_COLCHETES, '['), s[1:]
-    elif s[0] in ']':
+    elif s[0] == ']':
         return token(TipoToken.FECHA_COLCHETES, ']'), s[1:]
     elif s[0] == ':':
         return token(TipoToken.DOIS_PONTOS, ':'), s[1:]
     elif s[0] == ',':
         return token(TipoToken.VIRGULA, ','), s[1:]
+    
+    # Verifica palavras-chave JSON (true, false, null)
+    elif s.startswith('true'):
+        return token(TipoToken.TRUE, 'true', True), s[4:]
+    elif s.startswith('false'):
+        return token(TipoToken.FALSE, 'false', False), s[5:]
+    elif s.startswith('null'):
+        return token(TipoToken.NULL, 'null', None), s[4:]
+    
+    # Se o token não for reconhecido, retorna um token de erro
     else:
-        return rec_palavra_chave(s)
+        return token(TipoToken.ERRO, s[0]), s[1:]
+
 
 # função principal do analisador léxico
 # processa toda a string de entrada e retorna uma lista de tokens

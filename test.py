@@ -1,5 +1,7 @@
 import random
+import json  # Para exibir a estrutura JSON formatada
 from analisador_lexico import analise_lexica
+from analisador_sintatico import AnalisadorSintatico
 
 # Lista de testes JSON
 testes = [
@@ -24,3 +26,15 @@ print(teste_escolhido)
 print("\nTokens Gerados:")
 for tok in resultado:
     print(tok)
+
+# Executa o analisador sintático
+print("\nResultado da Análise Sintática:")
+try:
+    sintatico = AnalisadorSintatico(resultado)
+    resultado_sintatico = sintatico.analisar()
+    print("Análise sintática concluída com sucesso!")
+    # Exibe o JSON formatado
+    print("Estrutura JSON:")
+    print(json.dumps(resultado_sintatico, indent=4, ensure_ascii=False))  # Formata a saída com indentação
+except Exception as e:
+    print(f"Erro durante a análise sintática: {e}")
